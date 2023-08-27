@@ -2,8 +2,6 @@
 const express = require("express"); // Express (un framework web pour Node.js)
 const morgan = require("morgan"); // Morgan (un middleware de logging pour Express)
 const path = require("path"); // Path (un module natif de Node.js)
-const multer = require("multer"); // Multer (un middleware pour Express.js)
-/////const fs = require('fs'); // File System (un module natif de Node.js)
 
 // Création de l'application Express
 const app = express();
@@ -14,14 +12,14 @@ const port = process.env.PORT || 3000;
 // Importation des routes définies dans le dossier './routes'
 const index = require("./routes");
 
+// Initialisation de la base de données
+require("./database");
+
 // Configuration des paramètres de l'application
 app.set("views", path.join(__dirname, "views")); // des fichiers de vue pug
 app.set("view engine", "pug"); // moteur de rendu de vue (pug)
 
 // Utilisation des middlewares
-
-//////// utilise le middleware Multer pour gérer le multipart/form-data, utilisé pour le téléchargement de fichiers
-app.use(multer({ dest: "uploads/" }).single("videoFile"));
 
 // utilese le middleware de logging Morgan pour enregistrer les requêtes entrantes
 app.use(morgan("short"));
@@ -39,4 +37,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(index);
 
 // Démarre le serveur en écoutant les requêtes sur le port spécifié
-app.listen(port);
+app.listen(port, () => {
+  console.log(`App is listening on Port ${port}`);
+});
