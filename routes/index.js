@@ -41,8 +41,11 @@ router.get("/videos", async (req, res) => {
 router.post("/uploadvideo", upload.single("chemin"), async (req, res) => {
   const { body, file } = req;
   body.chemin = file.path;
+  body.filename = file.filename;
 
-  // // Crée une nouvelle instance du modèle Video avec les donnnées MongoDB
+  console.log(body);
+
+  // Crée une nouvelle instance du modèle Video avec les donnnées MongoDB
   const newVideo = new Video(body);
 
   try {

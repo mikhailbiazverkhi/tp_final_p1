@@ -30,6 +30,12 @@ const videoSchema = schema({
     minlength: [1, "Chemin trop court"],
     required: [true, "Champ requis"],
   },
+  filename: {
+    type: String,
+    maxlength: [300, "Filename trop long"],
+    minlength: [1, "Filename trop court"],
+    required: [true, "Champ requis"],
+  },
 });
 
 // Création du modèle de tweet à partir du schéma
