@@ -1,0 +1,20 @@
+extends ../layout
+
+block content 
+
+    div(class="d-flex flex-row content mx-auto")
+        div(class="flex-fill")
+            form(class="card" method="post" action="/uploadvideo" enctype="multipart/form-data")
+                div(class="card-header") Ajouter la vidéo
+                div(class="card-body")
+                    div(class="mb-3 inputs-fields" )
+                        input(class="form-control" name="titre" placeholder="Titre de la vidéo")
+                        input(class="form-control" name="description" placeholder="Description de la vidéo")
+                        input(class="form-control" name="category" placeholder="Catégorie de la vidéo")
+                        input(class="form-control" type="file" name="chemin" accept="video/*")
+                        //- if errors
+                        //-     ul(class="my-2")
+                        //-         each error in errors
+                        //-             li(class="text-danger")= error
+                        div(class="w-100")
+                            input(type="submit" value="Téléverser" class="btn btn-primary ms-auto d-block")

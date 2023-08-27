@@ -1,0 +1,17 @@
+extends ../layout.pug 
+
+block content 
+    div(class="d-flex flex-row content mx-auto")
+        div(class="flex-fill d-flex flex-column")
+            if videos 
+                each video in videos 
+                    div(class="card video-element")
+                        div(class="card-body")= video.titre
+                    div(class="card video-element")
+                        div(class="card-body")= video.description
+                    div(class="card video-element")
+                        div(class="card-body")= video.category
+                    //- div(class="card video-element")
+                    //-     div(class="card-body")= video.chemin
+                    div(class="card video-element")
+                        a(class="navbar-brand" href= "/" + video.chemin)= video.chemin
