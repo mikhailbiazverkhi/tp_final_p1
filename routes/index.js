@@ -28,12 +28,20 @@ router.get("/videos/upload", (req, res) => {
 //show video-list
 router.get("/videos", async (req, res) => {
   try {
+    // OK 200
     const videos = await Video.find({}).exec();
+
+    if (videos.length === 0) {
+      return res.status(404).render("videos/error", {
+        message: "Aucune vidéo trouvée",
+      });
+    }
 
     res.render("videos/video-list", { videos });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Erreur interne du serveur");
+    res.status(500).render("videos/error", {
+      message: "Erreur serveur ou problème avec la base de données",
+    });
   }
 });
 
@@ -45,18 +53,29 @@ router.post("/uploadvideo", upload.single("chemin"), async (req, res) => {
 
   console.log(body);
 
-  // Crée une nouvelle instance du modèle Video avec les donnnées MongoDB
-  const newVideo = new Video(body);
+  // Check the file extension here before attempting to save
+  const fileExtension = file.originalname.split(".").pop();
+  if (fileExtension !== "mp4") {
+    return res.status(400).render("videos/error", {
+      message:
+        "Error 400 - Mauvais format du fichier. Seuls les fichiers .mp4 sont autorisés.",
+    });
+  }
+  // Create a new instance of the Video model with MongoDB data
 
   try {
+    // OK 200
+    const newVideo = new Video(body);
     await newVideo.save();
-
+    // res.status(200).json({ message: "Vidéo téléchargée avec succès." });
     res.redirect("/");
   } catch (err) {
-    const errors = Object.keys(err.errors).map(
-      (key) => err.errors[key].message
-    );
-    res.status(400).render("videos/video-form", { errors });
+    if (err) {
+      return res.status(400).render("videos/error", {
+        message:
+          "Error 500 - Erreur serveur ou problème avec la base de données.",
+      });
+    }
   }
 });
 
@@ -69,9 +88,9 @@ router.get("/videos/stream/:filename", (req, res) => {
   fs.stat(videoPath, (err, stats) => {
     if (err || !stats.isFile()) {
       // If the file doesn't exist, render the error page
-      return res
-        .status(404)
-        .render("videos/error", { message: "Video not found" });
+      return res.status(404).render("videos/error", {
+        message: "Error 404 - La vidéo demandée n'est pas trouvée",
+      });
     }
 
     // Get the file size
@@ -89,10 +108,12 @@ router.get("/videos/stream/:filename", (req, res) => {
     // Handle errors from the file stream
     fileStream.on("error", (err) => {
       console.error("Error reading video file:", err);
-      res.status(500).render("error", { message: "Internal Server Error" });
+      // Respond with a 500 Internal Server Error status and message
+      res.status(500).render("videos/error", {
+        message:
+          "Error 500 - Erreur serveur ou problème avec la lecture du fichier vidéo",
+      });
     });
-
-    return;
   });
 });
 
